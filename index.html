@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎨4U U6 Sept 2026互動學習網</title>
+<style>
+:root{
+  --mBlue:#E2F1FF; --mPurple:#F3E8FF; --mPink:#FCE7F3; --mYellow:#FFFBEB;
+  --mGreen:#ECFDF5; --coffee:#4A3E3D; --coffeeLt:#6B5A59; --bg:#FFFDF9;
+  --ok:#3F9D6B; --no:#C2557A;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--coffee);
+ font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+ line-height:1.75;font-size:16px}
+#fw{position:fixed;inset:0;pointer-events:none;z-index:50}
+header{position:sticky;top:0;z-index:40;background:var(--mBlue);
+ border-bottom:2px solid #cfe4f7;display:flex;align-items:center;
+ justify-content:space-between;gap:10px;padding:8px 14px}
+header h1{font-size:1.05rem;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{cursor:pointer;border:2px solid #d9c9e8;background:var(--mPurple);color:var(--coffee);
+ border-radius:14px;padding:7px 14px;font-size:.95rem;font-family:inherit;transition:.18s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #9b7bc4;outline-offset:2px}
+#menu{position:absolute;right:10px;top:52px;z-index:41;background:#fff;border:2px solid #e4d6f2;
+ border-radius:18px;padding:10px;box-shadow:0 10px 28px rgba(74,62,61,.18);display:none;min-width:250px}
+#menu.open{display:block}
+#menu .btn{display:block;width:100%;text-align:left;margin:6px 0}
+main{max-width:960px;margin:0 auto;padding:16px 14px 80px}
+section{display:none}
+section.active{display:block}
+h2{font-size:1.25rem;border-left:8px solid #d9c9e8;padding-left:10px;margin:26px 0 12px}
+h3{font-size:1.05rem;margin:20px 0 8px;color:#5c4a63}
+.card{background:#fff;border:2px solid #f0e6f7;border-radius:18px;padding:14px;margin:12px 0}
+.q{background:var(--mYellow);border:2px solid #f3e6c5;border-radius:16px;padding:13px;margin:14px 0}
+.q p.stem{font-weight:700;margin:.2em 0 .6em}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid #e9dcf5;
+ border-radius:12px;padding:8px 12px;margin:5px 0;cursor:pointer;font-family:inherit;font-size:.97rem;transition:.15s}
+.opt:hover{transform:translateY(-2px);background:var(--mPurple)}
+.opt.sel{background:var(--mPink);border-color:#f0b9d3}
+.opt.right{background:var(--mGreen);border-color:#9ed9b8}
+.opt.wrong{background:var(--mPink);border-color:#e39ab9}
+.sol{display:none;margin-top:10px;background:var(--mGreen);border:2px dashed #a9dcc1;
+ border-radius:14px;padding:12px;animation:open .45s ease}
+.sol.show{display:block}
+@keyframes open{from{opacity:0;transform:rotateX(-70deg);transform-origin:top}to{opacity:1;transform:rotateX(0)}}
+.sol b{color:#2f7a53}
+.blank{display:inline-block;min-width:110px;border:none;border-bottom:2px solid #8fbfe8;
+ background:var(--mBlue);border-radius:6px 6px 0 0;padding:2px 6px;font-family:inherit;font-size:.95rem;color:var(--coffee)}
+.blank.right{background:var(--mGreen);border-bottom-color:#4aa578}
+.blank.wrong{background:var(--mPink);border-bottom-color:#d4779f}
+select.dd{background:var(--mPurple);border:2px solid #d9c9e8;border-radius:10px;padding:3px 6px;font-family:inherit;font-size:.95rem;color:var(--coffee)}
+.hint{color:#2f7a53;font-size:.88rem}
+.num{color:#8a6fae;font-weight:700;font-size:.85rem;vertical-align:super}
+mark{background:#FFF3B0;padding:0 2px;border-radius:4px}
+.kw{color:#7a4fa8;font-weight:700}
+.spk{cursor:pointer;border:none;background:transparent;font-size:1rem;padding:0 3px}
+#score{display:none;position:sticky;top:50px;z-index:30;background:var(--mGreen);
+ border:2px solid #a9dcc1;border-radius:14px;padding:8px 12px;margin:8px 0;font-weight:700}
+#score.show{display:block}
+.pop{display:inline-block;animation:pop .5s}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.6)}100%{transform:scale(1)}}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--coffee);
+ color:#fff;border-radius:16px;padding:10px 18px;z-index:60;display:none;max-width:90%}
+.tabsel{background:var(--mPink);border-color:#f0b9d3}
+.wbwrap{position:sticky;top:52px;z-index:20;background:var(--mYellow);border:2px solid #f3e6c5;border-radius:16px;margin:10px 0}
+.wbhead{cursor:pointer;padding:8px 12px;font-weight:700;display:flex;justify-content:space-between}
+.wbbody{max-height:170px;overflow-y:auto;padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px}
+.wbbody.hide{display:none}
+.chip{cursor:pointer;background:#fff;border:2px solid #e9dcf5;border-radius:12px;padding:4px 10px;font-size:.93rem;transition:.15s}
+.chip:hover{transform:translateY(-2px)}
+.chip.sel{background:var(--mPink);border-color:#f0b9d3}
+.chip.used{opacity:.35;pointer-events:none}
+.slot{display:inline-block;min-width:130px;border-bottom:2px solid #8fbfe8;background:var(--mBlue);
+ border-radius:6px 6px 0 0;padding:2px 8px;cursor:pointer;min-height:1.7em}
+.slot.right{background:var(--mGreen);border-bottom-color:#4aa578}
+.slot.wrong{background:var(--mPink);border-bottom-color:#d4779f}
+.zh{color:#2f7a53;font-size:.9rem}
+.seq{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.seqitem{cursor:pointer;background:#fff;border:2px solid #e9dcf5;border-radius:12px;padding:8px 12px;transition:.15s}
+.seqitem:hover{transform:translateY(-2px)}
+.seqitem.picked{background:var(--mPurple);border-color:#c9aee4}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
+.sq{border:2px solid #e9dcf5;border-radius:12px;padding:8px 4px;text-align:center;font-size:.8rem;background:#fff}
+.sq.here{background:var(--mPink);border-color:#f0b9d3;font-weight:700}
+.sq.done{background:var(--mGreen);border-color:#9ed9b8}
+textarea{width:100%;font-family:inherit;font-size:.97rem;border:2px solid #cfe4f7;border-radius:12px;padding:8px;background:var(--mBlue);color:var(--coffee)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;margin:8px 0}
+th,td{border:1px solid #e4d6f2;padding:6px 8px;text-align:left}
+th{background:var(--mPurple)}
+@media(max-width:600px){body{font-size:15px}main{padding:12px 10px 70px}
+ h2{font-size:1.1rem}.board{grid-template-columns:repeat(4,1fr)}.wbbody{max-height:130px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="fw"></canvas>
+<header>
+  <h1>🎨4U U6 Sept 2026互動學習網</h1>
+  <button class="btn" id="menuBtn" onclick="toggleMenu()">☰ 選單</button>
+</header>
+<div id="menu">
+  <button class="btn" onclick="go('practice',this)">💡 字彙對對碰</button>
+  <button class="btn" onclick="go('cloze',this)">📝 克漏字與填空</button>
+  <button class="btn" onclick="go('review',this)">📚 Reading 架構總複習</button>
+  <button class="btn" onclick="go('board',this)">🎲 摘要大富翁</button>
+  <button class="btn" onclick="go('trans',this)">✍️ 翻譯練習</button>
+  <button class="btn" onclick="go('master',this)">🕵️ 名作對照 Masterpieces</button>
+  <hr>
+  <button class="btn" onclick="toggleScore()">🏆 顯示／隱藏計分列</button>
+  <button class="btn" onclick="wipe()">🧹 清除紀錄，重新開始</button>
+</div>
+<main>
+<div id="score">🏆 Kahoot 積分：<span id="pts" class="pop">0</span> 分　|　🔥 連對：<span id="streak">0</span>　|　✅ 答對 <span id="nok">0</span> / 作答 <span id="ntot">0</span></div>
+<!-- ================= TAB 1 ================= -->
+<section id="practice" class="active">
+  <h2>💡 字彙對對碰</h2>
+  <div id="catbar" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+  <div class="wbwrap">
+    <div class="wbhead" onclick="document.getElementById('wbbody').classList.toggle('hide')">
+      <span>🗃 Word Bank（點選詞彙 → 再點空格填入；再點空格可退回）</span><span>▲▼</span>
+    </div>
+    <div class="wbbody" id="wbbody"></div>
+  </div>
+  <div id="qlist"></div>
+  <button class="btn" onclick="checkPractice()">✓ Check answers</button>
+</section>
+
+<!-- ================= TAB 2 ================= -->
+<section id="cloze">
+  <h2>📝 克漏字與填空</h2>
+  <div class="card" id="clozeText"></div>
+  <button class="btn" onclick="checkCloze()">✓ Check answers</button>
+  <button class="btn" onclick="toggleSol('clozeSol')">📖 參考解答：</button>
+  <div class="sol" id="clozeSol">
+    <h3>參考解答的句子（完整七段，答案以粗體標示）</h3>
+    <p>Do you enjoy reading stories that keep you guessing until the very end? If you do, you have probably heard of Agatha Christie (1890–1976). She was an English author who <b>is known for</b> her detective novels and short-story <b>collections</b>（她是一位英國作家，以偵探小說和短篇故事集為人所知）. Because of this, people often call her the Queen of Crime.</p>
+    <p>Many of her stories take place in <b>(A) confined</b> spaces. One of her most famous books, <b>Murder</b>（謀殺）on the Orient Express, is set on a train. <b>In addition</b>, And Then There Were None is about mysterious events on a <b>remote</b> island（除此之外，《一個都不留》則描寫一座偏遠島嶼上發生的神祕事件）. Both stories include very unexpected endings that shock readers.</p>
+    <p>Christie also created some unforgettable characters. <b>For instance</b>（例如）, Hercule Poirot, a smart Belgian detective, always notices small details that others miss. Miss Marple, <b>on the other hand</b>, is an <b>elderly</b> woman who solves crimes by using her life experience（另一方面，瑪波小姐則是一位上了年紀的女性，她運用自己的人生經驗來破案）. These characters changed <b>mystery</b>（推理故事；偵探小說）stories. They proved that detectives don't have to be strong heroes. A sharp mind is more powerful than <b>(D) physical</b> <b>strength</b>（力量）.</p>
+    <p>Agatha Christie wrote many mysteries, and interestingly, she became part of one herself.</p>
+    <p>In 1926, Christie's mother died, and her husband wanted a <b>(B) divorce</b>. During this difficult time, she suddenly went <b>missing</b>（找不到的；失蹤的）for 11 days. Many people, from police officers to ordinary <b>citizens</b>, joined the search for her（從警察到一般民眾，許多人都加入尋找她的行列）. When her car was found near a lake, the mystery only grew deeper. Finally, Christie was found safe at a hotel. Surprisingly, she had <b>checked in</b> at the hotel（登記入住旅館）under the <b>(E) surname</b> of her husband's mistress.</p>
+    <p>People had different ideas about what had happened to her during the 11 days. Her husband <b>claimed</b> she had lost her memory during those days（她的丈夫聲稱她在那段期間失去了記憶）. However, a popular theory <b>suggested</b> that she had disappeared <b>on purpose</b> to punish her cheating husband（然而，有一個廣為流傳的說法顯示，她是故意消失，好懲罰她出軌的丈夫）. <b>This way</b>（如此一來）, she could embarrass him and his mistress or even make the police <b>(F) suspect</b> him of a crime. Even today, no one knows exactly why she <b>vanished</b>（仍然沒有人確切知道她為什麼會消失）.</p>
+    <p>As 2026 <b>marks</b>（標誌；意味著）the 50th anniversary of Christie's death, her stories continue to <b>(C) fascinate</b> readers around the world.</p>
+    <h3>25 格答案速查表</h3>
+    <table><tr><th>格</th><th>答案</th><th>格</th><th>答案</th><th>格</th><th>答案</th></tr>
+    <tr><td>1</td><td>is known for</td><td>10</td><td>mystery</td><td>19</td><td>suggested</td></tr>
+    <tr><td>2</td><td>collections</td><td>11</td><td>(D) physical</td><td>20</td><td>on purpose</td></tr>
+    <tr><td>3</td><td>(A) confined</td><td>12</td><td>strength</td><td>21</td><td>This way</td></tr>
+    <tr><td>4</td><td>Murder</td><td>13</td><td>(B) divorce</td><td>22</td><td>(F) suspect</td></tr>
+    <tr><td>5</td><td>In addition</td><td>14</td><td>missing</td><td>23</td><td>vanished</td></tr>
+    <tr><td>6</td><td>remote</td><td>15</td><td>citizens</td><td>24</td><td>marks</td></tr>
+    <tr><td>7</td><td>For instance</td><td>16</td><td>checked in</td><td>25</td><td>(C) fascinate</td></tr>
+    <tr><td>8</td><td>on the other hand</td><td>17</td><td>(E) surname</td><td></td><td></td></tr>
+    <tr><td>9</td><td>elderly</td><td>18</td><td>claimed</td><td></td><td></td></tr></table>
+  </div>
+</section>
+<!-- ================= TAB 3 ================= -->
+<section id="review">
+  <h2>📚 Reading 架構總複習</h2>
+
+  <h3>一、Reading</h3>
+  <div class="card">
+    <button class="btn" onclick="readAloud(document.getElementById('partA').innerText,0.9)">🔊 Part A 朗讀</button>
+    <button class="btn" onclick="readAloud(document.getElementById('partB').innerText,0.9)">🔊 Part B 朗讀</button>
+    <button class="btn" onclick="stopRead()">⏹ 停止</button>
+    <p style="font-weight:700">U6　A Life Full of Mystery? Meet Agatha Christie!</p>
+    <div id="partA">
+      <p><b>¶1</b>　Do you enjoy reading stories that keep you guessing until the very end? If you do, you have probably heard of Agatha Christie (1890–1976). She was an English author who <span class="kw">is known for</span> her <span class="kw">detective novels</span> and <span class="kw">short-story collections</span>. <mark>Because of this</mark>, people often call her the <span class="kw">Queen of Crime</span>.</p>
+      <p><b>¶2</b>　<mark>Many of her stories</mark> take place in <span class="kw">confined spaces</span>. <mark>One of her most famous books</mark>, Murder on the Orient Express, is set on a train. <mark>In addition</mark>, And Then There Were None is about mysterious events on a <span class="kw">remote</span> island. <mark>Both stories</mark> include very <span class="kw">unexpected endings</span> that shock readers.</p>
+      <p><b>¶3</b>　Christie also created some <span class="kw">unforgettable characters</span>. <mark>For instance</mark>, Hercule Poirot, a smart Belgian detective, always notices small details that others miss. Miss Marple, <mark>on the other hand</mark>, is an <span class="kw">elderly</span> woman who solves crimes by using her life experience. <mark>These characters</mark> changed mystery stories. <mark>They proved that</mark> detectives don't have to be strong heroes. <span class="kw">A sharp mind is more powerful than physical strength.</span></p>
+    </div>
+    <div id="partB">
+      <p><b>導言</b>　Agatha Christie wrote many mysteries, and <mark>interestingly</mark>, she became <span class="kw">part of one herself</span>.</p>
+      <p><b>¶1</b>　<mark>In 1926</mark>, Christie's mother died, and her husband wanted a <span class="kw">divorce</span>. <mark>During this difficult time</mark>, she <mark>suddenly</mark> went <span class="kw">missing</span> for 11 days. Many people, from police officers to ordinary <span class="kw">citizens</span>, joined the search for her. When her car was found near a lake, <mark>the mystery only grew deeper</mark>. <mark>Finally</mark>, Christie was found safe at a hotel. <mark>Surprisingly</mark>, she <span class="kw">had checked in</span> at the hotel <span class="kw">under the surname</span> of her husband's <span class="kw">mistress</span>.</p>
+      <p><b>¶2</b>　People had different ideas about what had happened to her during the 11 days. Her husband <mark>claimed</mark> she <span class="kw">had lost</span> her memory during those days. <mark>However, a popular theory suggested</mark> that she <span class="kw">had disappeared</span> <span class="kw">on purpose</span> to punish her cheating husband. <mark>This way</mark>, she could embarrass him and his mistress or even make the police <span class="kw">suspect</span> him of a crime. <mark>Even today, no one knows exactly</mark> why she <span class="kw">vanished</span>. <mark>As 2026 marks the 50th anniversary</mark> of Christie's death, her stories continue to <span class="kw">fascinate</span> readers around the world.</p>
+    </div>
+  </div>
+
+  <h3>二、架構偵察</h3>
+  <div id="genreQs"></div>
+
+  <div class="q">
+    <p class="stem">📐 Part A 說明結構排序：請依序點選，排出 Part A 的組織順序。</p>
+    <div class="seq" id="seqA"></div>
+    <button class="btn" onclick="checkSeq('A')">✓ 檢查</button>
+    <button class="btn" onclick="resetSeq('A')">↺ 重排</button>
+    <button class="btn" onclick="toggleSol('solSeqA')">📖 參考解答：</button>
+    <div class="sol" id="solSeqA"><b>正解順序：</b>①→②→③→④。Part A 走「總說（人物定位）→ 分說一（場景 confined spaces）→ 分說二（角色對比）→ 抽象結論（A sharp mind…）」。訊號詞依序是 Because of this ／ In addition ／ on the other hand ／ They proved that。常見錯誤：把「角色」段誤放在「場景」段之前，但 ¶3 的 also 已標示它是「再加一項」，不能排第一。</div>
+  </div>
+
+  <div class="q">
+    <p class="stem">🕒 Part B 時間軸排序（5 句）：請依事件發生順序點選。</p>
+    <div class="seq" id="seqB"></div>
+    <button class="btn" onclick="checkSeq('B')">✓ 檢查</button>
+    <button class="btn" onclick="resetSeq('B')">↺ 重排</button>
+    <button class="btn" onclick="toggleSol('solSeqB')">📖 參考解答：</button>
+    <div class="sol" id="solSeqB"><b>正解順序：</b>母親過世、丈夫要求離婚 → 失蹤 11 天 → 汽車在湖邊被發現 → 在旅館被尋獲（冒用 mistress 的姓入住）→ 出現兩種解釋且至今無解。解題程序：先抓時間訊號 In 1926 / During this difficult time / When… / Finally / Even today；再用過去完成式（had checked in）確認「更早的過去」不等於「敘述順序」。常見錯誤：看到 had checked in 就把它排到最前面——它是敘事中的回溯，不是第一個被說出的事件。</div>
+  </div>
+
+  <div class="q">
+    <p class="stem">🧩 摘要重組（Passage 1）：請依「主題句／支持論點／結論句」的順序點選三句。</p>
+    <div class="seq" id="seq1"></div>
+    <button class="btn" onclick="checkSeq('1')">✓ 檢查</button>
+    <button class="btn" onclick="resetSeq('1')">↺ 重排</button>
+    <button class="btn" onclick="toggleSol('solSeq1')">📖 參考解答：</button>
+    <div class="sol" id="solSeq1"><b>摘要 (24 words)：</b>Agatha Christie, the Queen of Crime, set stories in confined spaces. She created unforgettable characters. A sharp mind is more powerful than physical strength.<br>（第 1 句＝主題句；第 2 句＝支持論點；第 3 句＝結論句）<br><b>判斷程序：</b>含「人物＋稱號＋全篇範圍」者為主題句；含 She created 具體事實者為支持論點；不含專有名詞、語氣拉高到通則者為結論句。</div>
+  </div>
+
+  <div class="q">
+    <p class="stem">🧩 摘要重組（Passage 2）：請依「主題句／支持論點／結論句」的順序點選三句。</p>
+    <div class="seq" id="seq2"></div>
+    <button class="btn" onclick="checkSeq('2')">✓ 檢查</button>
+    <button class="btn" onclick="resetSeq('2')">↺ 重排</button>
+    <button class="btn" onclick="toggleSol('solSeq2')">📖 參考解答：</button>
+    <div class="sol" id="solSeq2"><b>摘要：</b>In 1926, Christie went missing for 11 days. Many people joined the search. Even today, no one knows exactly why she vanished.<br>（第 1 句＝主題句；第 2 句＝支持論點；第 3 句＝結論句）<br><b>判斷程序：</b>帶時間點 In 1926 的句子起頭；Many people joined… 是事件的延伸細節；Even today 把時間拉回現在，是收尾標記。</div>
+  </div>
+
+  
+
+  <h3>三、四層次思考（English A2–B1／中文解說）</h3>
+  <div id="fourQs"></div>
+
+  <h3>四、學測題型</h3>
+  <div id="gsatQs"></div>
+
+  <div class="q">
+    <p class="stem">🔗 混合題 1（架構分析）：In Part A, the writer first tells us who Christie was, then talks about her settings, and then about her characters. Why does the writer put the sentence "A sharp mind is more powerful than physical strength." at the very end?</p>
+    <textarea id="mix1" rows="3" placeholder="Write 1–2 sentences. Sentence frame: The writer puts it at the end because of the fact that ..."></textarea>
+    <button class="btn" onclick="toggleSol('solMix1')">📖 參考解答：</button>
+    <div class="sol" id="solMix1"><b>參考答案：</b>The writer puts it at the end because of the fact that it turns two examples into one general idea, so it works as the conclusion of the whole part.<br><b>解說：</b>這一句不含任何專有名詞，是把 Poirot 與 Miss Marple 兩個具體例子「抽象化」的通則句，因此只能放結尾。鷹架 <b>the fact that</b> 後面必須接完整子句（S+V），不可只接名詞片語。常見錯誤：寫成 because of the fact of it turns…（of 後不能接子句）。</div>
+  </div>
+
+  <div class="q">
+    <p class="stem">🔗 混合題 2（代名詞回指）：Read these lines: "These characters changed mystery stories. <u>They</u> proved that detectives don't have to be strong heroes." Who or what does <u>They</u> refer to? Answer in English and give one clue from the text.</p>
+    <textarea id="mix2" rows="3" placeholder="They refers to ... . One clue is the fact that ..."></textarea>
+    <button class="btn" onclick="toggleSol('solMix2')">📖 參考解答：</button>
+    <div class="sol" id="solMix2"><b>參考答案：</b>They refers to Hercule Poirot and Miss Marple (= these characters). One clue is the fact that the sentence before it uses "These characters," and the two detectives are the only people named in that paragraph.<br><b>解說：</b>代名詞回指的解題程序：先找「最近的複數名詞組」→ 再確認語意是否相容（能「證明」事情的是角色，不是 stories）。常見錯誤：誤指 mystery stories，但故事本身不會 prove 什麼，是角色的設定推翻了舊觀念。</div>
+  </div>
+
+  <div class="q">
+    <p class="stem">🈺 翻譯 1：這位偵探總是注意到別人忽略的小細節。</p>
+    <textarea id="tr1" rows="2"></textarea>
+    <button class="btn" onclick="toggleSol('solTr1')">📖 參考解答：</button>
+    <div class="sol" id="solTr1">The detective always notices small details that others miss. <button class="spk" onclick="readAloud('The detective always notices small details that others miss.',1.0)">🔊</button><br><b>解說：</b>「注意到」用 notice；「別人忽略的」用關係子句 that others miss 修飾 details，miss 在此是「未注意到」而非「想念」——此為 polysemy 考點。</div>
+  </div>
+
+  <div class="q">
+    <p class="stem">🈺 翻譯 2：即使到了今天，也沒有人確切知道她為什麼消失。</p>
+    <textarea id="tr2" rows="2"></textarea>
+    <button class="btn" onclick="toggleSol('solTr2')">📖 參考解答：</button>
+    <div class="sol" id="solTr2">Even today, no one knows exactly why she vanished. <button class="spk" onclick="readAloud('Even today, no one knows exactly why she vanished.',1.0)">🔊</button><br><b>解說：</b>no one 為單數主詞，動詞用 knows；why 引導的名詞子句採「直述句語序」she vanished，不可寫成 why did she vanish。</div>
+  </div>
+</section>
+<!-- ================= TAB 4 ================= -->
+<section id="board">
+  <h2>🎲 摘要大富翁</h2>
+  <p>擲骰子前進，停在哪一格就答哪一題。答對得分並前進，答錯留在原地重整旗鼓。走完 12 格即完成一圈。</p>
+  <div class="board" id="boardGrid"></div>
+  <button class="btn" onclick="roll()">🎲 擲骰子</button>
+  <button class="btn" onclick="resetBoard()">↺ 重新開始</button>
+  <p id="diceMsg" style="font-weight:700"></p>
+  <div id="boardQ"></div>
+</section>
+
+<!-- ================= TAB 5 ================= -->
+<section id="trans">
+  <h2>✍️ 翻譯練習 I（Sep. 2026）</h2>
+  <p>讀完了第 1 課到第 5 課的單字、片語、文法，現在來做幾題翻譯練習驗收一下吧！</p>
+
+  <h3>填空式翻譯</h3>
+  <div class="q">
+    <p class="stem">1. 雖然梅森的夢想看似遙不可及，但他每天仍持續努力。</p>
+    <p>Although Mason's dream seems <input class="blank" id="t1a"> <input class="blank" id="t1b"> <input class="blank" id="t1c">, he keeps working hard every day.</p>
+    <button class="btn" onclick="toggleSol('solT1')">📖 參考解答：</button>
+    <div class="sol" id="solT1">
+      <b>✅ 答案：</b>Although Mason's dream seems <b>out of reach</b>, he keeps working hard every day.
+      <button class="spk" onclick="readAloud(&quot;Although Mason's dream seems out of reach, he keeps working hard every day.&quot;,1.0)">🔊</button><br>
+      <b>📘 出處：</b>U2<br>
+      <b>🔍 解析：</b>片語 out of reach 表「遙不可及」，可譬喻式地描述某事物（夢想、目標或機會等）在能力範圍外，所以達不到；也可以用字面解讀，形容某物在物理上碰不到（太高、太遠等）。常見用法為 beV/seem/feel out of reach。也可在片語後方加上 for sb 或是寫為 out of sb's reach，表示「對某人來說遙不可及」。
+    </div>
+  </div>
+
+  <div class="q">
+    <p class="stem">2. 請準時完成你的作業，並在明天交給老師。</p>
+    <p>Please finish your homework <input class="blank" id="t2a"> <input class="blank" id="t2b"> and give it to the teacher tomorrow.</p>
+    <button class="btn" onclick="toggleSol('solT2')">📖 參考解答：</button>
+    <div class="sol" id="solT2">
+      <b>✅ 答案：</b>Please finish your homework <b>on time</b> and give it to the teacher tomorrow.
+      <button class="spk" onclick="readAloud('Please finish your homework on time and give it to the teacher tomorrow.',1.0)">🔊</button><br>
+      <b>📘 出處：</b>U3<br>
+      <b>🔍 解析：</b>片語 on time 表示按表定時間的「準時」，常用於上課、交作業、開會、搭車等有明確時間點的情境。常見搭配詞為 beV/V on time 表示「準時到達／做某事」。注意不要與 in time 搞混，該片語強調可能趕不上的「沒錯過；來得及」。
+    </div>
+  </div>
+
+  <h3>引導式翻譯</h3>
+  <div class="q">
+    <p class="stem">3. 泰里斯熬夜到很晚，因此他沒有錯過凌晨兩點的籃球賽。</p>
+    <p>Tyrese stayed up late, <input class="blank" style="min-width:260px" id="t3"> the 2 a.m. basketball game.</p>
+    <button class="btn" onclick="toggleSol('solT3')">📖 參考解答：</button>
+    <div class="sol" id="solT3">
+      <b>✅ 答案：</b>Tyrese stayed up late, <b>so he didn't miss out on</b> the 2 a.m. basketball game.
+      <button class="spk" onclick="readAloud(&quot;Tyrese stayed up late, so he didn't miss out on the 2 a.m. basketball game.&quot;,1.0)">🔊</button><br>
+      <b>📘 出處：</b>U4<br>
+      <b>🔍 解析：</b>由於同一件事的前半句使用過去簡單式 stayed，故後半句也應使用過去簡單式。片語 miss out on sth 為不可分離的動詞片語，意思是「錯失某物」，通常用於描述一個原本可以享受、受益、參與的好機會、好經驗、好東西，帶有明顯的惋惜感。題目句子寫到「因此他沒有錯過」，故使用否定式，即 so he didn't miss out on。
+    </div>
+  </div>
+
+  <div class="q">
+    <p class="stem">4. 我們支付的價格可能會根據飯店房間的大小而改變。</p>
+    <p>The price we pay may change <input class="blank" style="min-width:320px" id="t4">.</p>
+    <button class="btn" onclick="toggleSol('solT4')">📖 參考解答：</button>
+    <div class="sol" id="solT4">
+      <b>✅ 答案：</b>The price we pay may change <b>depending on the size of the hotel room</b>.
+      <button class="spk" onclick="readAloud('The price we pay may change depending on the size of the hotel room.',1.0)">🔊</button><br>
+      <b>📘 出處：</b>U5<br>
+      <b>🔍 解析：</b>介系詞片語 depending on sth 意思是「取決於…；根據…」，後方須接上名詞（片語）。該片語常用於說明某件事會受到某個條件影響，並因此產生不同結果。它在邏輯上類似 if，但特別適合表達「有多種可能性」的情境。題目中名詞片語「飯店房間的大小」寫為 the size of the hotel room。
+    </div>
+  </div>
+
+  <h3>整句翻譯</h3>
+  <div class="q">
+    <p class="stem">5. 會議室上週五由尚恩（Sean）整理乾淨了。</p>
+    <textarea id="t5" rows="2"></textarea>
+    <button class="btn" onclick="toggleSol('solT5')">📖 參考解答：</button>
+    <div class="sol" id="solT5">
+      <b>✅ 答案：</b>The meeting room was tidied up by Sean last Friday.
+      <button class="spk" onclick="readAloud('The meeting room was tidied up by Sean last Friday.',1.0)">🔊</button><br>
+      <b>📘 出處：</b>U1（被動語態）＋ U3（tidy sth up）<br>
+      <b>🔍 解析：</b>題目提到「上週五」和「整理乾淨了」，可知此句是描述過去發生且已經結束的事，因此應使用過去簡單式。透過「會議室由尚恩整理乾淨了」這個陳述方式可知，邏輯上的「受事者（the meeting room）」變成了句子的「主詞」——因會議室自己不會拿掃把去打掃，它只能「接受」別人的整理，故本句應使用被動語態，句型為 S + beV + p.p. (+ by O) 表「某人／物被（某人／物）…」。因句子時態「上週五」為過去式，且句子主詞為單數名詞 the meeting room，故 beV 須用 was。講述「收拾／整理…」可使用片語 tidy sth up，sth 為代名詞時可置於 tidy 跟 up 中間；而動詞 tidy 的過去分詞為 tidied。句中被整理的對象為會議室（the meeting room），置於主詞位置；執行整理動作的人為尚恩（Sean），置於 by 一字後方，句子按照上方公式可寫為 The meeting room was tidied up by Sean。「上週五」這個時間副詞置於句尾，故本句完整寫為 The meeting room was tidied up by Sean last Friday。
+    </div>
+  </div>
+
+  <div class="q">
+    <p class="stem">6. 截至本學期，這個班上有三分之二的學生在放學後上額外的英文課。</p>
+    <textarea id="t6" rows="3"></textarea>
+    <button class="btn" onclick="toggleSol('solT6')">📖 參考解答：</button>
+    <div class="sol" id="solT6">
+      <b>✅ 答案：</b>As of this semester, two-thirds of the students in this class take extra English lessons after school.
+      <button class="spk" onclick="readAloud('As of this semester, two-thirds of the students in this class take extra English lessons after school.',1.0)">🔊</button><br>
+      <b>📘 出處：</b>U2（as of sth）＋ U5（分數的寫法與讀法）<br>
+      <b>🔍 解析：</b>從題目中的「截至本學期」可知，句子是在描述到現在仍成立的情況，因此使用現在簡單式陳述。若要表示「截至某時間為止（的統計或狀態）」，可使用片語 as of sth。as of 後方須接上明確時間點，「截至本學期」則寫為 as of this semester。英文中，分數的寫法為分子用「基數」，分母用「序數」，兩者通常用連字號連接。基數指的是 one、two、three …；而序數則是指 first、second、third … 等。在分子大於 1 時，分母的序數須以複數表示。因此，句中的「三分之二」寫為 two-thirds。當分數引導名詞片語作主詞時，後方的動詞單複數取決於分數後方的名詞。句中「這個班上三分之二的學生」寫為 two-thirds of the students in this class，而 the students in this class 為複數，故後方須使用複數動詞，所以「上額外的英文課」寫為 take extra English lessons。「放學後」這個時間副詞置於句尾，故本句完整寫為 As of this semester, two-thirds of the students in this class take extra English lessons after school。
+    </div>
+  </div>
+
+  <h3>📌 Language in Focus｜非限定用法之同位語</h3>
+  <div class="card">
+    <p>「同位語」為緊鄰某一名詞（片語）或代名詞的相等語，可以是名詞、名詞片語，或是名詞子句。同位語有限定與非限定（亦稱補述）兩種用法，非限定用法之同位語用來補充說明先行詞（即前方緊鄰之詞語），該同位語即使去除也不影響句意理解。須注意，非限定用法的同位語置於句中時，前後須加逗點與句子其他部分隔開：</p>
+    <p>• One of her (Agatha Christie's) most famous books, <b>Murder on the Orient Express</b>, is set on a train.（課文第 5~6 行）</p>
+    <p>• For instance, Hercule Poirot, <b>a smart Belgian detective</b>, always notices small details that others miss.（課文第 9~10 行）</p>
+    <p>• Taipei 101, a famous building in Taiwan, is popular with many foreign visitors.<br><span class="zh">台北 101——臺灣一棟有名的建築——受到許多外國遊客歡迎。</span></p>
+    <p>• Terry, my best friend from school, often helps me with my English homework.<br><span class="zh">泰瑞——我在學校最好的朋友——常常在英文作業上幫忙我。</span></p>
+    <p>非限定用法的同位語可視為非限定形容詞子句之簡化，故第 5~6 和第 9~10 行課文亦可改寫為：</p>
+    <p>• One of her most famous books, which is Murder on the Orient Express, is set on a train.</p>
+    <p>• For instance, Hercule Poirot, who is a smart Belgian detective, always notices small details that others miss.</p>
+  </div>
+</section>
+<!-- ================= TAB 6 ================= -->
+<section id="master">
+  <h2>🕵️ Agatha Christie's Masterpieces</h2>
+  <div class="card" style="text-align:center"><svg viewBox="0 0 340 90" style="width:100%;max-width:330px;height:auto" role="img" aria-label="Magnifying glass over a book">
+<rect x="0" y="0" width="340" height="90" rx="14" fill="#FFFBEB"/>
+<rect x="40" y="26" width="120" height="44" rx="6" fill="#4A3E3D"/>
+<rect x="46" y="32" width="108" height="32" rx="4" fill="#FFFDF9"/>
+<g stroke="#6B5A59" stroke-width="3"><line x1="56" y1="42" x2="144" y2="42"/><line x1="56" y1="50" x2="134" y2="50"/><line x1="56" y1="58" x2="120" y2="58"/></g>
+<circle cx="228" cy="42" r="24" fill="none" stroke="#4A3E3D" stroke-width="6"/>
+<circle cx="228" cy="42" r="19" fill="#E2F1FF" opacity=".7"/>
+<line x1="246" y1="60" x2="272" y2="80" stroke="#4A3E3D" stroke-width="8" stroke-linecap="round"/>
+<text x="228" y="49" font-size="20" text-anchor="middle" fill="#7a4fa8">?</text>
+</svg></div>
+  <div class="card">
+    <p>Both of these books are the most famous masterworks by <b>Agatha Christie</b>, the Queen of Crime. <i>Murder on the Orient Express</i> is world-famous for its shocking group-crime ending. <i>And Then There Were None</i> is a legendary masterpiece that created the 'isolated island' format (also called the 'stormy mountain villa' style) and the classic 'nursery rhyme murders.'
+    <button class="spk" onclick="readAloud(this.parentNode.innerText,0.9)">🔊</button></p>
+  </div>
+
+  <div class="card" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+    <figure style="margin:0;flex:1 1 280px;text-align:center"><svg viewBox="0 0 340 170" style="width:100%;max-width:330px;height:auto" role="img" aria-label="Train stuck in deep snow">
+<rect x="0" y="0" width="340" height="170" rx="14" fill="#E2F1FF"/>
+<circle cx="270" cy="34" r="16" fill="#FFFBEB"/>
+<g fill="#FFFFFF" opacity=".9"><circle cx="40" cy="26" r="3"/><circle cx="90" cy="44" r="2.5"/><circle cx="150" cy="22" r="3"/><circle cx="200" cy="50" r="2.5"/><circle cx="300" cy="70" r="3"/><circle cx="60" cy="70" r="2.5"/><circle cx="240" cy="20" r="2.5"/><circle cx="120" cy="66" r="2.5"/></g>
+<rect x="26" y="82" width="250" height="48" rx="10" fill="#4A3E3D"/>
+<rect x="276" y="92" width="42" height="38" rx="8" fill="#6B5A59"/>
+<rect x="286" y="66" width="14" height="28" rx="4" fill="#6B5A59"/>
+<ellipse cx="293" cy="60" rx="16" ry="9" fill="#FFFFFF" opacity=".85"/>
+<g fill="#FFFBEB"><rect x="40" y="94" width="26" height="20" rx="4"/><rect x="76" y="94" width="26" height="20" rx="4"/><rect x="112" y="94" width="26" height="20" rx="4"/><rect x="148" y="94" width="26" height="20" rx="4"/><rect x="184" y="94" width="26" height="20" rx="4"/><rect x="220" y="94" width="26" height="20" rx="4"/><rect x="286" y="100" width="22" height="16" rx="4"/></g>
+<rect x="0" y="128" width="340" height="42" fill="#FFFFFF"/>
+<path d="M0 130 Q60 116 120 130 T240 130 T340 126 L340 170 L0 170 Z" fill="#F3E8FF"/>
+<g fill="#4A3E3D"><circle cx="70" cy="132" r="9"/><circle cx="130" cy="132" r="9"/><circle cx="200" cy="132" r="9"/><circle cx="292" cy="132" r="9"/></g>
+</svg>
+      <figcaption style="font-size:.9rem"><b>Murder on the Orient Express</b>｜困在大雪中的密室車廂</figcaption></figure>
+    <figure style="margin:0;flex:1 1 280px;text-align:center"><svg viewBox="0 0 340 170" style="width:100%;max-width:330px;height:auto" role="img" aria-label="Isolated island with a house and ten little soldier figures">
+<rect x="0" y="0" width="340" height="170" rx="14" fill="#F3E8FF"/>
+<circle cx="62" cy="36" r="15" fill="#FFFBEB"/>
+<path d="M0 96 Q40 86 80 96 T160 96 T240 96 T340 92 L340 170 L0 170 Z" fill="#E2F1FF"/>
+<path d="M90 104 Q170 74 252 104 Q214 126 170 126 Q126 126 90 104 Z" fill="#4A3E3D"/>
+<rect x="150" y="74" width="42" height="30" fill="#6B5A59"/>
+<path d="M144 76 L171 54 L198 76 Z" fill="#C2557A"/>
+<rect x="164" y="86" width="12" height="18" fill="#FFFBEB"/>
+<g fill="#FCE7F3">
+<circle cx="104" cy="140" r="5"/><circle cx="128" cy="146" r="5"/><circle cx="152" cy="140" r="5"/><circle cx="176" cy="148" r="5"/><circle cx="200" cy="140" r="5"/>
+<circle cx="224" cy="146" r="5"/><circle cx="248" cy="140" r="5"/><circle cx="80" cy="148" r="5"/><circle cx="272" cy="148" r="5"/><circle cx="296" cy="141" r="5"/>
+</g>
+<g fill="#FCE7F3">
+<rect x="100" y="146" width="8" height="14" rx="3"/><rect x="124" y="152" width="8" height="14" rx="3"/><rect x="148" y="146" width="8" height="14" rx="3"/><rect x="172" y="154" width="8" height="14" rx="3"/><rect x="196" y="146" width="8" height="14" rx="3"/>
+<rect x="220" y="152" width="8" height="14" rx="3"/><rect x="244" y="146" width="8" height="14" rx="3"/><rect x="76" y="154" width="8" height="14" rx="3"/><rect x="268" y="154" width="8" height="14" rx="3"/><rect x="292" y="147" width="8" height="14" rx="3"/>
+</g>
+<path d="M0 112 Q30 106 60 112" stroke="#FFFFFF" stroke-width="3" fill="none" opacity=".8"/>
+<path d="M270 118 Q300 112 330 118" stroke="#FFFFFF" stroke-width="3" fill="none" opacity=".8"/>
+</svg>
+      <figcaption style="font-size:.9rem"><b>And Then There Were None</b>｜與世隔絕的孤島與十個小士兵</figcaption></figure>
+  </div>
+  <h3>一、Core Comparison of the Works</h3>
+  <table>
+    <tr><th>Features</th><th>Murder on the Orient Express (1934)</th><th>And Then There Were None (1939)</th></tr>
+    <tr><td>Main Detective</td><td>Hercule Poirot</td><td>No Detective (Everyone is both a suspect and a victim)</td></tr>
+    <tr><td>Main Setting</td><td>The luxury compartments of the Orient Express trapped in the snow</td><td>The helpless and isolated Soldier Island off the Devon coast</td></tr>
+    <tr><td>Crime Pattern</td><td>A single murder inside a locked and closed train compartment</td><td>A series of planned murders following an old nursery rhyme</td></tr>
+    <tr><td>Core Theme</td><td>The conflict between law and justice, and vigilante justice</td><td>Crime and punishment, and unavoidable karma</td></tr>
+    <tr><td>Classic Labels</td><td>Train room mystery, all-star suspects</td><td>Isolated island style, the original nursery rhyme murder book</td></tr>
+  </table>
+
+  <h3>二、Key Book Summaries</h3>
+  <div class="card">
+    <p><b>Murder on the Orient Express:</b> The story follows the famous detective Poirot on a luxury train. The train gets stuck in deep snow during the trip. Then, a rich businessman is found stabbed to death inside his locked compartment. Poirot must find the real killer among 13 different passengers on the same train.
+    <button class="spk" onclick="readAloud(this.parentNode.innerText,0.9)">🔊</button></p>
+    <p><b>And Then There Were None:</b> Ten strangers with secret past crimes are invited to a big house on an isolated island. There is no host on the island. There is only an old nursery rhyme and ten little soldier dolls. Following the words of the rhyme, the guests die one by one, and the killer is hidden among them.
+    <button class="spk" onclick="readAloud(this.parentNode.innerText,0.9)">🔊</button></p>
+  </div>
+
+  <h3>三、四層次思考（English A2–B1／中文解說）</h3>
+  <div id="masterQs"></div>
+
+  <h3>四、延伸寫作</h3>
+  <div class="q">
+    <p class="stem">✍️ Use the table above. Write 3–4 sentences to compare the two books. You must use <b>One big difference is that…</b> and <b>On the other hand,…</b>.</p>
+    <textarea id="mwrite" rows="4" placeholder="Both books are set in confined spaces. One big difference is that ..."></textarea>
+    <button class="btn" onclick="toggleSol('solMWrite')">📖 參考解答：</button>
+    <div class="sol" id="solMWrite"><b>參考寫法：</b>Both books take place in confined spaces, so no one can leave. One big difference is that Murder on the Orient Express has a famous detective, Hercule Poirot, who looks for the killer. On the other hand, And Then There Were None has no detective at all; everyone is both a suspect and a victim. In addition, the first book asks what justice really means, while the second one is about crime and punishment.<br><b>評分重點：</b>(1) 先給「相同點」再給「相異點」，符合 compare-and-contrast 的組織結構；(2) One big difference is that 後必須接完整子句；(3) On the other hand 一定要有前一手，不可放在段落第一句。</div>
+  </div>
+</section>
+
+</main>
+<div id="toast"></div>
+<script>
+/* ---------- state ---------- */
+const S=JSON.parse(localStorage.getItem('u6state')||'{}');
+S.pts=S.pts||0;S.streak=S.streak||0;S.ok=S.ok||0;S.tot=S.tot||0;S.cat=S.cat||'verb';
+S.text=S.text||{};S.done=S.done||{};
+function save(){localStorage.setItem('u6state',JSON.stringify(S));}
+function wipe(){localStorage.removeItem('u6state');location.reload();}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';
+ clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3500);}
+function toggleMenu(){const m=document.getElementById('menu');m.classList.toggle('open');
+ document.getElementById('menuBtn').textContent=m.classList.contains('open')?'✕ 關閉':'☰ 選單';}
+document.addEventListener('click',e=>{const m=document.getElementById('menu');
+ if(m.classList.contains('open')&&!m.contains(e.target)&&e.target.id!=='menuBtn')toggleMenu();});
+function go(id){document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');window.scrollTo(0,0);toggleMenu();}
+function toggleScore(){document.getElementById('score').classList.toggle('show');}
+function toggleSol(id){document.getElementById(id).classList.toggle('show');}
+function award(n){S.pts+=n;S.ok++;S.tot++;S.streak++;S.pts+=Math.min(S.streak,5)*20;paint();save();boom();}
+function miss(){S.tot++;S.streak=0;paint();save();}
+function paint(){const p=document.getElementById('pts');p.textContent=S.pts;
+ p.classList.remove('pop');void p.offsetWidth;p.classList.add('pop');
+ document.getElementById('streak').textContent=S.streak;
+ document.getElementById('nok').textContent=S.ok;document.getElementById('ntot').textContent=S.tot;}
+
+/* ---------- speech ---------- */
+function readAloud(t,r){if(!window.speechSynthesis)return;speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=r||1;speechSynthesis.speak(u);}
+function stopRead(){if(window.speechSynthesis)speechSynthesis.cancel();}
+
+/* ---------- fireworks ---------- */
+const cv=document.getElementById('fw'),cx=cv.getContext('2d');let ps=[];
+function sz(){cv.width=innerWidth;cv.height=innerHeight;}sz();addEventListener('resize',sz);
+const COLS=['#E2F1FF','#F3E8FF','#FCE7F3','#FFFBEB','#ECFDF5','#FFD6E8','#CDE9FF'];
+function boom(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const x=innerWidth/2,y=innerHeight/3;
+ for(let i=0;i<60;i++){const a=Math.random()*Math.PI*2,s=2+Math.random()*6;
+  ps.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,a:1,c:COLS[i%COLS.length]});}}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);
+ ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;p.a-=0.012;
+  cx.globalAlpha=Math.max(p.a,0);cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,3.5,0,7);cx.fill();});
+ ps=ps.filter(p=>p.a>0);cx.globalAlpha=1;requestAnimationFrame(loop);}loop();
+
+/* ---------- generic MC renderer ---------- */
+function mc(host,list,tag){
+ host.innerHTML=list.map((q,i)=>`<div class="q" id="${tag}${i}">
+  <p class="stem">${i+1}. ${q.s} <button class="spk" onclick="readAloud(this.parentNode.textContent,1.0)">🔊</button></p>
+  ${q.o.map((o,j)=>`<button class="opt" onclick="pick('${tag}',${i},${j})">(${'ABCD'[j]}) ${o}</button>`).join('')}
+  <button class="btn" onclick="toggleSol('${tag}s${i}')">📖 參考解答：</button>
+  <div class="sol" id="${tag}s${i}"><b>正解：(${'ABCD'[q.a]})</b> ${q.o[q.a]}<br>${q.e}</div></div>`).join('');
+ window['DATA_'+tag]=list;}
+function pick(tag,i,j){const q=window['DATA_'+tag][i];const box=document.getElementById(tag+i);
+ if(box.dataset.done)return;box.dataset.done=1;
+ const btns=box.querySelectorAll('.opt');btns.forEach((b,k)=>{if(k===q.a)b.classList.add('right');});
+ if(j===q.a){award(100);toast('✅ 答對！＋分');}else{btns[j].classList.add('wrong');miss();toast('❌ 再想想，看解答回推線索');}
+ document.getElementById(tag+'s'+i).classList.add('show');}
+
+/* ---------- TAB1 vocabulary ---------- */
+const VOCAB={
+ verb:{n:'動詞',items:[
+  {w:'fascinate',z:'強烈吸引；使著迷',s:'Her stories continue to ____ readers around the world.'},
+  {w:'claimed',z:'聲稱；主張（過去式）',s:'Her husband ____ she had lost her memory during those days.'},
+  {w:'suggested',z:'顯示；暗指（過去式）',s:'A popular theory ____ that she had disappeared on purpose.'},
+  {w:'suspect',z:'懷疑…有問題',s:'She could even make the police ____ him of a crime.'},
+  {w:'vanished',z:'（尤指突然）消失（過去式）',s:'Even today, no one knows exactly why she ____.'},
+  {w:'marks',z:'標誌；意味著',s:'As 2026 ____ the 50th anniversary of her death, her books are still popular.'},
+  {w:'notices',z:'注意到',s:'Poirot always ____ small details that others miss.'},
+  {w:'solves',z:'解決；破（案）',s:'Miss Marple ____ crimes by using her life experience.'}]},
+ noun:{n:'名詞',items:[
+  {w:'detective',z:'偵探',s:'Hercule Poirot is a smart Belgian ____.'},
+  {w:'divorce',z:'離婚',s:'In 1926, her husband wanted a ____.'},
+  {w:'surname',z:'姓氏',s:'She checked in under the ____ of her husband\u2019s mistress.'},
+  {w:'mistress',z:'情婦',s:'The name she used belonged to her husband\u2019s ____.'},
+  {w:'anniversary',z:'週年紀念',s:'2026 is the 50th ____ of Christie\u2019s death.'},
+  {w:'collections',z:'故事集；文集',s:'She is known for her detective novels and short-story ____.'},
+  {w:'murder',z:'謀殺',s:'____ on the Orient Express is set on a train.'},
+  {w:'citizens',z:'國民；公民；市民',s:'Many people, from police officers to ordinary ____, joined the search.'},
+  {w:'strength',z:'力氣；力量；體力',s:'A sharp mind is more powerful than physical ____.'},
+  {w:'mystery',z:'推理故事；謎團',s:'When her car was found near a lake, the ____ only grew deeper.'}]},
+ adj:{n:'形容詞副詞',items:[
+  {w:'confined',z:'（地方）狹窄的',s:'Many of her stories take place in ____ spaces.'},
+  {w:'physical',z:'身體的；生理上的',s:'A sharp mind is more powerful than ____ strength.'},
+  {w:'remote',z:'偏遠的',s:'And Then There Were None is about events on a ____ island.'},
+  {w:'elderly',z:'上了年紀的；年老的',s:'Miss Marple is an ____ woman who solves crimes.'},
+  {w:'mysterious',z:'神祕的；不可思議的',s:'The book is about ____ events on an island.'},
+  {w:'missing',z:'找不到的；失蹤的',s:'During this difficult time, she suddenly went ____ for 11 days.'},
+  {w:'Surprisingly',z:'令人驚訝地',s:'____, she had checked in under another woman\u2019s surname.'},
+  {w:'interestingly',z:'有趣的是',s:'She wrote many mysteries, and ____, she became part of one herself.'}]},
+ coll:{n:'慣用搭配詞',items:[
+  {w:'is known for',z:'以…（特色）為人所知',s:'She ____ her detective novels and short-story collections.'},
+  {w:'In addition',z:'除此之外',s:'____, And Then There Were None is set on a remote island.'},
+  {w:'For instance',z:'例如',s:'____, Hercule Poirot always notices small details.'},
+  {w:'on the other hand',z:'另一方面',s:'Miss Marple, ____, uses her life experience.'},
+  {w:'checked in',z:'登記入住',s:'She had ____ at the hotel under a false surname.'},
+  {w:'on purpose',z:'故意地；有意地',s:'A popular theory says she disappeared ____.'},
+  {w:'This way',z:'如此一來',s:'____, she could embarrass her husband and his mistress.'},
+  {w:'go missing',z:'找不到；失蹤',s:'People sometimes ____ for days without telling anyone.'},
+  {w:'as of',z:'截至…',s:'____ Monday, 15 students have signed up for the field trip to the zoo.'},
+  {w:'take shape',z:'成形；形成',s:'The new sales plan is beginning to ____ as more ideas are discussed.'},
+  {w:'over time',z:'隨著時間過去',s:'Since the new train station opened, the small town grew busier ____.'},
+  {w:'depend on',z:'依賴…',s:'Babies are very small and helpless, so they ____ their parents for food and care.'},
+  {w:'out of reach',z:'遙不可及',s:'For Clara, opening a caf\u00e9 seems ____ because she doesn\u2019t have enough money.'},
+  {w:'such as',z:'比如',s:'In Lenny\u2019s free time, he enjoys creative hobbies, ____ writing, drawing, and making music.'}]},
+ pat:{n:'重要句型',items:[
+  {w:'had already left',z:'過去完成式＋by the time',s:'Freddy ____ for work by the time I arrived at the house.'},
+  {w:'had lived',z:'過去完成式＋for＋一段時間',s:'Evan ____ in the US for two years before he came back to Taiwan.'},
+  {w:'had played',z:'過去完成式＋since',s:'Katrina ____ violin since she was three years old, but she stopped.'},
+  {w:'a famous building in Taiwan',z:'非限定同位語（補述先行詞）',s:'Taipei 101, ____, is popular with many foreign visitors.'},
+  {w:'my best friend from school',z:'非限定同位語（補述先行詞）',s:'Terry, ____, often helps me with my English homework.'},
+  {w:'a smart Belgian detective',z:'非限定同位語（＝who is…之簡化）',s:'For instance, Hercule Poirot, ____, always notices small details.'}]}
+};
+let CUR=[],SELW=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildCats(){document.getElementById('catbar').innerHTML=Object.keys(VOCAB).map(k=>
+ `<button class="btn ${k===S.cat?'tabsel':''}" onclick="setCat('${k}')">${VOCAB[k].n}</button>`).join('');}
+function setCat(k){S.cat=k;save();buildCats();buildPractice();}
+function buildPractice(){
+ const items=VOCAB[S.cat].items;CUR=shuffle(items);SELW=null;
+ document.getElementById('wbbody').innerHTML=shuffle(items).map(it=>
+  `<button class="chip" data-w="${it.w}" onclick="selW(this)">${it.w} <span class="spk" onclick="event.stopPropagation();readAloud('${it.w}',1.0)">🔊</span></button>`).join('');
+ document.getElementById('qlist').innerHTML=CUR.map((it,i)=>
+  `<div class="q"><p><span class="num">${i+1}</span> <span class="zh">💬 提示用中譯：${it.z}</span></p>
+   <p>${it.s.replace('____',`<span class="slot" id="sl${i}" data-ans="${it.w}" onclick="putW(${i})"></span>`)}
+   <button class="spk" onclick="readAloud('${it.s.replace('____',it.w).replace(/'/g,"\\'")}',1.0)">🔊</button></p>
+   <div class="sol" id="vs${i}"></div></div>`).join('');}
+function selW(b){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+ b.classList.add('sel');SELW=b;}
+function putW(i){const sl=document.getElementById('sl'+i);
+ if(sl.textContent.trim()){const w=sl.dataset.filled;
+  document.querySelectorAll('.chip').forEach(c=>{if(c.dataset.w===w)c.classList.remove('used');});
+  sl.textContent='';sl.dataset.filled='';sl.className='slot';return;}
+ if(!SELW){toast('請先在 Word Bank 點選一個詞彙');return;}
+ sl.textContent=SELW.dataset.w;sl.dataset.filled=SELW.dataset.w;
+ SELW.classList.add('used');SELW.classList.remove('sel');SELW=null;}
+function checkPractice(){let first=null;
+ CUR.forEach((it,i)=>{const sl=document.getElementById('sl'+i),sol=document.getElementById('vs'+i);
+  const ok=(sl.dataset.filled||'').toLowerCase()===it.w.toLowerCase();
+  sl.classList.remove('right','wrong');sl.classList.add(ok?'right':'wrong');
+  sol.innerHTML=`<b>正解：</b>${it.w}（${it.z}）<button class="spk" onclick="readAloud('${it.w}',1.0)">🔊</button><br>
+   <b>完整句：</b>${it.s.replace('____','<b>'+it.w+'</b>')} <button class="spk" onclick="readAloud('${it.s.replace('____',it.w).replace(/'/g,"\\'")}',1.0)">🔊</button>`;
+  sol.classList.add('show');
+  if(ok)award(100);else{miss();if(!first)first=sl;}});
+ if(first)first.scrollIntoView({behavior:'smooth',block:'center'});else toast('🎉 全對！');}
+
+/* ---------- TAB2 cloze ---------- */
+const DD={3:'A',11:'D',13:'B',17:'E',22:'F',25:'C'};
+const DDOPT=[['A','confined'],['B','divorce'],['C','fascinate'],['D','physical'],['E','surname'],['F','suspect']];
+const TYPED={1:'is known for',2:'collections',4:'Murder',5:'In addition',6:'remote',7:'For instance',
+ 8:'on the other hand',9:'elderly',10:'mystery',12:'strength',14:'missing',15:'citizens',16:'checked in',
+ 18:'claimed',19:'suggested',20:'on purpose',21:'This way',23:'vanished',24:'marks'};
+const HINT={1:'以…為人所知',2:'故事集',4:'謀殺',5:'除此之外',6:'偏遠的',7:'例如',8:'另一方面',9:'上了年紀的',
+ 10:'推理故事；偵探小說',12:'力量',14:'找不到的；失蹤的',15:'國民；公民',16:'登記入住',18:'聲稱',19:'顯示；暗指',
+ 20:'故意地',21:'如此一來',23:'消失',24:'標誌；意味著'};
+const CLOZE=`<p>Do you enjoy reading stories that keep you guessing until the very end? If you do, you have probably heard of Agatha Christie (1890–1976). She was an English author who [1] her detective novels and short-story [2]（她是一位英國作家，以偵探小說和短篇故事集為人所知）. Because of this, people often call her the Queen of Crime.</p>
+<p>Many of her stories take place in [3] spaces. One of her most famous books, [4] on the Orient Express, is set on a train. [5], And Then There Were None is about mysterious events on a [6] island（除此之外，《一個都不留》則描寫一座偏遠島嶼上發生的神祕事件）. Both stories include very unexpected endings that shock readers.</p>
+<p>Christie also created some unforgettable characters. [7], Hercule Poirot, a smart Belgian detective, always notices small details that others miss. Miss Marple, [8], is an [9] woman who solves crimes by using her life experience（另一方面，瑪波小姐則是一位上了年紀的女性，她運用自己的人生經驗來破案）. These characters changed [10] stories. They proved that detectives don't have to be strong heroes. A sharp mind is more powerful than [11] [12].</p>
+<p>Agatha Christie wrote many mysteries, and interestingly, she became part of one herself.</p>
+<p>In 1926, Christie's mother died, and her husband wanted a [13]. During this difficult time, she suddenly went [14] for 11 days. Many people, from police officers to ordinary [15], joined the search for her（從警察到一般民眾，許多人都加入尋找她的行列）. When her car was found near a lake, the mystery only grew deeper. Finally, Christie was found safe at a hotel. Surprisingly, she had [16] at the hotel under the [17] of her husband's mistress.</p>
+<p>People had different ideas about what had happened to her during the 11 days. Her husband [18] she had lost her memory during those days（她的丈夫聲稱她在那段期間失去了記憶）. However, a popular theory [19] that she had disappeared [20] to punish her cheating husband. [21], she could embarrass him and his mistress or even make the police [22] him of a crime. Even today, no one knows exactly why she [23]（仍然沒有人確切知道她為什麼會消失）.</p>
+<p>As 2026 [24] the 50th anniversary of Christie's death, her stories continue to [25] readers around the world.</p>`;
+function buildCloze(){
+ let h=CLOZE;
+ for(let n=25;n>=1;n--){
+  let rep;
+  if(DD[n]){rep=`<span class="num">${n}</span><select class="dd" id="c${n}">`+
+    `<option value=""></option>`+DDOPT.map(o=>`<option value="${o[0]}">(${o[0]}) ${o[1]}</option>`).join('')+`</select>`;}
+  else{rep=`<span class="num">${n}</span><input class="blank" id="c${n}"><span class="zh">（${HINT[n]}）</span>`;}
+  h=h.split('['+n+']').join(rep);}
+ document.getElementById('clozeText').innerHTML=h;
+ Object.keys(S.text).forEach(k=>{if(k.startsWith('c')){const el=document.getElementById(k);if(el)el.value=S.text[k];}});
+ document.querySelectorAll('#clozeText input,#clozeText select').forEach(el=>
+  el.addEventListener('change',()=>{S.text[el.id]=el.value;save();}));}
+function norm(s){return (s||'').toLowerCase().replace(/\s+/g,' ').trim();}
+function checkCloze(){let first=null;
+ for(let n=1;n<=25;n++){const el=document.getElementById('c'+n);
+  const ans=DD[n]?DD[n]:TYPED[n];const ok=DD[n]?el.value===ans:norm(el.value)===norm(ans);
+  el.classList.remove('right','wrong');el.classList.add(ok?'right':'wrong');
+  if(ok)award(50);else{miss();if(!first)first=el;}}
+ if(first)first.scrollIntoView({behavior:'smooth',block:'center'});else toast('🎉 25 格全對！');}
+
+/* ---------- TAB3 ---------- */
+const GENRE=[
+ {s:'Part A（第一天課文）最適合歸入哪一種文體？',o:['議論文','說明文','敘述文','描述文'],a:1,
+  e:'全篇為現在式（is known for / take place / notices / solves），陳述長期為真的事實而非一次性事件，且只提供資訊與例證（In addition、For instance），不爭辯立場。<br><b>為何其他錯：</b>議論文須有須被辯護的主張；敘述文須有事件時序；描述文重感官描摹。'},
+ {s:'Part B（第二天課文）最適合歸入哪一種文體？',o:['說明文','敘述文','描述文','議論文'],a:1,
+  e:'有明確時序（In 1926 / During this difficult time / Finally / Even today）與過去式、過去完成式（had checked in、had lost、had disappeared），屬典型敘事；末段雖並陳兩種解釋而帶說明議論色彩，但主軸仍是敘事。'},
+ {s:'Part A 最後一句「A sharp mind is more powerful than physical strength.」在結構上的功能是？',
+  o:['引起動機','舉例說明','把兩個例子抽象化成通則','提供時間背景'],a:2,
+  e:'這一句不含任何專有名詞，把 Poirot 與 Miss Marple 兩個具體例子拉高成可遷移的通則，是收尾句。<br><b>為何其他錯：</b>引起動機在 ¶1 的問句；舉例由 For instance 帶出；此句完全沒有時間訊息。'}];
+const SEQS={
+ A:{items:['總說：介紹 Agatha Christie 其人與「Queen of Crime」的稱號',
+   '分說一：她的故事多發生在 confined spaces，並舉兩本書為例',
+   '分說二：她創造了難忘的角色，Poirot 與 Miss Marple 形成對比',
+   '結論：A sharp mind is more powerful than physical strength.'],ord:[0,1,2,3]},
+ B:{items:['Christie\u2019s mother died, and her husband wanted a divorce.',
+   'She suddenly went missing for 11 days.',
+   'Her car was found near a lake, and the mystery only grew deeper.',
+   'Finally, she was found safe at a hotel under another surname.',
+   'Even today, people still argue about why she vanished.'],ord:[0,1,2,3,4]},
+ '1':{items:['She created unforgettable characters.',
+   'A sharp mind is more powerful than physical strength.',
+   'Agatha Christie, the Queen of Crime, set stories in confined spaces.'],ord:[2,0,1]},
+ '2':{items:['Even today, no one knows exactly why she vanished.',
+   'In 1926, Christie went missing for 11 days.',
+   'Many people joined the search.'],ord:[1,2,0]}};
+const PICK={};
+function buildSeq(k){const box=document.getElementById('seq'+k);PICK[k]=[];
+ const idx=shuffle(SEQS[k].items.map((_,i)=>i));
+ box.innerHTML=idx.map(i=>`<div class="seqitem" data-i="${i}" onclick="pickSeq('${k}',this)">${SEQS[k].items[i]}</div>`).join('');}
+function pickSeq(k,el){if(el.classList.contains('picked'))return;
+ el.classList.add('picked');PICK[k].push(+el.dataset.i);
+ el.innerHTML='<b>'+(PICK[k].length)+'.</b> '+el.innerHTML;}
+function resetSeq(k){buildSeq(k);}
+function checkSeq(k){const ord=SEQS[k].ord;
+ if(PICK[k].length<ord.length){toast('請先點選全部句子');return;}
+ const ok=PICK[k].every((v,i)=>v===ord[i]);
+ if(ok){award(150);toast('✅ 順序正確！');}else{miss();toast('❌ 順序還不對，看解答回推訊號詞');}
+ document.getElementById('solSeq'+k).classList.add('show');}
+const FOUR=[
+ {s:'What is the main purpose of Part A?',o:['To teach readers how to write a detective novel.','To compare two English writers with each other.','To introduce a famous writer and show what makes her books special.','To tell the story of one night on a train.'],a:2,
+  e:'<b>層次一 主要資訊。</b>¶1 定位人物，¶2、¶3 分別說明「場景」與「角色」的特色，末句再收成通則，全段目的是「介紹＋說明特色」。<br><b>為何其他錯：</b>(A) 全文沒有任何寫作教學步驟；(B) 只提到一位作家；(D) 火車只是其中一本書的場景，是例子不是主旨。'},
+ {s:'Why does the writer talk about two different books in the second paragraph?',o:['To show that many of her stories happen in small, closed places.','To prove that trains are more dangerous than islands.','To explain why readers do not like long books.','To show that Christie wrote only two books.'],a:0,
+  e:'<b>層次二 次要資訊。</b>兩本書是同一個主張「take place in confined spaces」底下的並列例證，訊號詞 In addition 與 Both stories 已把它們綁在一起。<br><b>為何其他錯：</b>(B) 文中沒有比較危險程度；(C) 沒有提到書的長短；(D) Many of her stories 已排除「只有兩本」。'},
+ {s:'Which sentence could be taken out of the third paragraph WITHOUT changing the main idea?',o:['Christie also created some unforgettable characters.','They proved that detectives do not have to be strong heroes.','A sharp mind is more powerful than physical strength.','Hercule Poirot is Belgian.'],a:3,
+  e:'<b>層次二 次要資訊。</b>「比利時人」只是角色的附加細節，刪掉不影響「角色設定改變了推理小說」這個主張。<br><b>為何其他錯：</b>(A) 是段落主張句；(B)(C) 是結論的兩個層次，刪掉會讓段落失去收尾。'},
+ {s:'In "These characters changed mystery stories," who are "These characters"?',o:['The readers of Christie\u2019s books','Hercule Poirot and Miss Marple','Christie and her husband','The police officers in the story'],a:1,
+  e:'<b>層次四 語言結構（anaphor 代名詞回指）。</b>解題程序：找前方最近的複數名詞組 → 確認語意相容。前兩句只點名 Poirot 與 Miss Marple。<br><b>為何其他錯：</b>(A)(C)(D) 都不在該段落的敘述範圍內，(C)(D) 是 Part B 的人物。'},
+ {s:'Why does the writer use the word "Surprisingly" in Part B?',o:['To show that the writer is angry with Christie','To give the reason for her mother\u2019s death','To tell readers that the next piece of information is hard to expect','To show that the story is finished'],a:2,
+  e:'<b>層次四 語氣副詞的操控效果。</b>Surprisingly、interestingly、However 都是句首句子副詞，先給讀者情緒指令，再給資訊，功能是調整期待。<br><b>為何其他錯：</b>(A) 全文為第三人稱客觀敘事；(B) 給原因要用 because；(D) 結束訊號是 Finally 或 Even today。'},
+ {s:'"She had checked in at the hotel under the surname of her husband\u2019s mistress." What does the past perfect tense show here?',o:['The action is happening right now.','The action will happen next week.','The action happened after she was found.','The action happened before she was found.'],a:3,
+  e:'<b>層次三 訊息與細節（時序邏輯）。</b>過去完成式標示「更早的過去」：先入住、後被尋獲。敘述順序不等於事件順序，這是本課文法重點。<br><b>為何其他錯：</b>(A)(B) 時態完全不符；(C) 正好把時序顛倒。'},
+ {s:'In "the mystery only grew deeper," the word "mystery" means',o:['a question that no one can answer yet','a detective novel you can buy in a bookstore','a hotel room near a lake','a report written by the police'],a:0,
+  e:'<b>層次四 一詞多義 polysemy。</b>同一個字在本課出現兩種意思：changed mystery stories 指「推理小說（文類）」；the mystery only grew deeper 指「謎團本身」。判斷靠搭配詞——grew deeper 只能修飾謎團。<br><b>為何其他錯：</b>(B) 是文類義，放在此處語意不通；(C)(D) 文中沒有這樣的指涉。'}];
+const GSAT=[
+ {s:'【克漏字】Christie is ____ for her detective novels and short-story collections.',o:['known','knowing','know','knew'],a:0,
+  e:'be known for sth 為固定搭配，表「以…（特色）為人所知」，known 為過去分詞。<br><b>為何其他錯：</b>knowing 為主動語態意為「知道」；know、knew 無法接在 is 之後。'},
+ {s:'【克漏字】Miss Marple, ____, is an elderly woman who solves crimes by using her life experience.',o:['in addition','on the other hand','for instance','this way'],a:1,
+  e:'前一句先寫 Poirot，本句改寫另一位風格相反的偵探，屬「對比」，須用 on the other hand，且前面必須已有「這一手」。<br><b>為何其他錯：</b>in addition 表並列加碼；for instance 表舉例；this way 表結果。'},
+ {s:'【克漏字】Even today, no one ____ exactly why she vanished.',o:['know','knowing','knows','known'],a:2,
+  e:'no one 視為單數主詞，現在簡單式動詞須加 -s。另外 why 引導的名詞子句採直述句語序 she vanished。<br><b>為何其他錯：</b>(A) 主詞動詞不一致；(B)(D) 不能單獨當主要動詞。'},
+ {s:'【閱讀測驗】What is the main idea of Part B?',o:['Christie wrote her best book while she was away from home.','Christie herself became part of a real mystery that is still not solved.','The police in 1926 were not good at their job.','Christie\u2019s husband wrote most of her detective stories.'],a:1,
+  e:'導言句 she became part of one herself 已預告全段主旨，結尾 no one knows exactly why she vanished 再次確認「未解」。<br><b>為何其他錯：</b>(A)(C)(D) 文中皆無根據，(C) 更是把「搜索規模大」誤讀成「辦案無能」。'},
+ {s:'【閱讀測驗】Which of the following is NOT true about the 11 days?',o:['Many ordinary citizens joined the search for Christie.','Her car was found near a lake.','She was found safe at a hotel.','Her husband said that she had disappeared on purpose.'],a:3,
+  e:'丈夫的說法是 she had lost her memory；「故意消失」是 a popular theory 的說法，兩者分屬不同來源。<br><b>解題程序：</b>NOT true 題先把每個選項「配回說話者」，最常見的陷阱就是張冠李戴。'},
+ {s:'【閱讀測驗】What is the writer\u2019s attitude toward Christie in Part B?',o:['Interested and curious','Angry and disappointed','Bored and tired','Worried and afraid'],a:0,
+  e:'interestingly、Surprisingly、the mystery only grew deeper、continue to fascinate 這些用字都指向「饒富興味」，且結尾把焦點拉回作品的持續魅力。<br><b>為何其他錯：</b>(B)(C)(D) 全文找不到任何批評、厭倦或恐懼的用語。'}];
+
+/* ---------- TAB4 board ---------- */
+const BOARD=[
+ {t:'背景',q:'Why do people call Christie "the Queen of Crime"?',o:['Because she was a real queen in England.','Because she is famous for her detective novels and story collections.','Because she worked for the police.','Because she lived on a remote island.'],a:1,e:'¶1 的 Because of this 回指前一句「以偵探小說與短篇故事集聞名」，稱號是結果不是原因。'},
+ {t:'象徵',q:'What do "confined spaces" like a train or an island add to a mystery story?',o:['They make the story longer.','They make it hard for anyone to leave, so everyone is a suspect.','They make the weather better.','They show the writer loves travel.'],a:1,e:'封閉空間＝嫌疑人有限、無人能逃，這是推理小說的結構裝置；課文用 take place in confined spaces 帶出此設計。'},
+ {t:'短答',q:'短答：Part A 用哪一個片語把第二個例子加進來？（請說出該片語）',ans:'In addition',e:'In addition 表並列加碼，後方接完整句子；若要接名詞須寫成 in addition to + N/V-ing。'},
+ {t:'細節',q:'How does Miss Marple solve crimes?',o:['By using her physical strength','By using her life experience','By asking Poirot for help','By reading police reports'],a:1,e:'¶3 明寫 solves crimes by using her life experience，並與 Poirot 的「觀察細節」形成對比。'},
+ {t:'象徵',q:'What does the last sentence of Part A really say about heroes?',o:['Heroes must be tall and strong.','Thinking well matters more than being strong.','Only men can be heroes.','Heroes should work alone.'],a:1,e:'A sharp mind is more powerful than physical strength 是把兩個角色抽象化的通則，重點在「腦力＞體力」。'},
+ {t:'短答',q:'短答：說出 Part B 中表示「更早的過去」的兩個動詞形式。',ans:'had checked in / had lost / had disappeared（任兩個）',e:'過去完成式用來把「更早的過去」與「後來的過去」分開，時序靠時態標示，不靠敘述順序。'},
+ {t:'背景',q:'In 1926, what two sad things happened to Christie?',o:['She lost her job and her house.','Her mother died and her husband wanted a divorce.','She lost her car and her money.','Her book failed and her dog ran away.'],a:1,e:'¶1 的 During this difficult time 回指前一句的兩件事，是失蹤事件的背景。'},
+ {t:'細節',q:'Why did the mystery "grow deeper" when her car was found?',o:['Because the car was new','Because the car was found but she was not','Because the car was on a train','Because the police lost the car'],a:1,e:'找到車卻找不到人，線索反而增加了未知；grow deeper 是把謎團當成有深度的空間的隱喻。'},
+ {t:'象徵',q:'What does checking in under the mistress\u2019s surname suggest?',o:['She wanted to make a joke with the hotel.','She may have wanted to point at her husband and his mistress.','She had forgotten her own name for sure.','She was working for the hotel.'],a:1,e:'課文只說 Surprisingly…under the surname of，並在下一段給出兩種解釋，其中 punish／embarrass 的說法正呼應此細節。'},
+ {t:'短答',q:'短答：丈夫的說法與 a popular theory 的說法各是什麼？（中文作答即可）',ans:'丈夫聲稱她失去記憶；流行說法認為她是故意消失以懲罰出軌的丈夫。',e:'兩種解釋分屬不同來源，證據強弱不同：丈夫是利害關係人，說法可信度較低；流行說法能解釋「冒用情婦姓氏」這個細節，解釋力較強。'},
+ {t:'細節',q:'What does "As 2026 marks the 50th anniversary of Christie\u2019s death" tell us?',o:['Christie died in 2026.','Christie died 50 years before 2026.','Christie was 50 years old when she died.','Christie wrote 50 books.'],a:1,e:'anniversary 為「週年紀念」，50th anniversary of her death 指死後滿 50 年，故 1976＋50＝2026，與 ¶1 括號中的生卒年一致。'},
+ {t:'摘要',q:'Which sentence works best as the LAST sentence of a summary of Part B?',o:['In 1926, Christie went missing for 11 days.','Many people joined the search.','Even today, no one knows exactly why she vanished.','Her husband wanted a divorce.'],a:2,e:'Even today 把時間拉回現在，是典型的收尾標記；其餘三句都是事件本體，屬主題句或支持論點。'}];
+let POS=-1;
+function drawBoard(){document.getElementById('boardGrid').innerHTML=BOARD.map((b,i)=>
+ `<div class="sq ${i===POS?'here':''} ${S.done['b'+i]?'done':''}">${i+1}<br>${b.t}</div>`).join('');}
+function roll(){const d=1+Math.floor(Math.random()*4);
+ POS=(POS+d)%BOARD.length;
+ document.getElementById('diceMsg').textContent=`🎲 擲出 ${d} 點，前進到第 ${POS+1} 格（${BOARD[POS].t}）`;
+ drawBoard();showBQ();}
+function resetBoard(){POS=-1;S.done={};save();drawBoard();
+ document.getElementById('boardQ').innerHTML='';document.getElementById('diceMsg').textContent='';}
+function showBQ(){const b=BOARD[POS],h=document.getElementById('boardQ');
+ if(b.o){h.innerHTML=`<div class="q" id="bq"><p class="stem">第 ${POS+1} 格｜${b.q}
+   <button class="spk" onclick="readAloud('${b.q.replace(/'/g,"\\'")}',1.0)">🔊</button></p>
+   ${b.o.map((o,j)=>`<button class="opt" onclick="bAns(${j})">(${'ABCD'[j]}) ${o}</button>`).join('')}
+   <button class="btn" onclick="toggleSol('bsol')">📖 參考解答：</button>
+   <div class="sol" id="bsol"><b>正解：(${'ABCD'[b.a]})</b> ${b.o[b.a]}<br>${b.e}</div></div>`;}
+ else{h.innerHTML=`<div class="q" id="bq"><p class="stem">第 ${POS+1} 格｜${b.q}</p>
+   <textarea rows="2" id="bshort"></textarea>
+   <button class="btn" onclick="toggleSol('bsol')">📖 參考解答：</button>
+   <div class="sol" id="bsol"><b>參考答案：</b>${b.ans}<br>${b.e}</div></div>`;}}
+function bAns(j){const b=BOARD[POS],box=document.getElementById('bq');
+ if(box.dataset.done)return;box.dataset.done=1;
+ const btns=box.querySelectorAll('.opt');btns.forEach((x,k)=>{if(k===b.a)x.classList.add('right');});
+ if(j===b.a){btns[j].classList.add('right');award(120);S.done['b'+POS]=1;save();toast('✅ 答對，保留這一格！');}
+ else{btns[j].classList.add('wrong');miss();toast('❌ 這一格先留著，下次再攻');}
+ drawBoard();document.getElementById('bsol').classList.add('show');}
+
+/* ---------- init ---------- */
+buildCats();buildPractice();buildCloze();
+mc(document.getElementById('genreQs'),GENRE,'g');
+mc(document.getElementById('fourQs'),FOUR,'f');
+mc(document.getElementById('gsatQs'),GSAT,'s');
+['A','B','1','2'].forEach(buildSeq);
+const MASTER=[
+ {s:'What do the two books have in common?',o:['Both of them have Hercule Poirot as the detective.','Both of them happen in a place that people cannot easily leave.','Both of them are about a nursery rhyme.','Both of them were written in 1939.'],a:1,
+  e:'<b>層次一 主要資訊。</b>一本困在大雪中的火車車廂，一本在孤島上，都是 confined spaces——正是課文 take place in confined spaces 的延伸。<br><b>為何其他錯：</b>(A) 第二本沒有偵探；(C) 童謠只出現在第二本；(D) 兩本年份不同（1934／1939）。'},
+ {s:'Why is And Then There Were None special in the history of mystery stories?',o:['It was the first book to use a train.','It created the isolated island format and the nursery rhyme murders.','It was the first book with a Belgian detective.','It was the first book with thirteen passengers.'],a:1,
+  e:'<b>層次二 次要資訊。</b>表格與導言都用 created / the original 這類「首創」用語標示它的開創性地位。<br><b>為何其他錯：</b>(A)(D) 是另一本的特徵；(C) 比利時偵探是 Poirot，屬 Murder on the Orient Express。'},
+ {s:'In "Everyone is both a suspect and a victim," what does this tell us about the second book?',o:['The police solve the case very quickly.','Nobody is safe, and nobody can be trusted.','Only one guest is in danger.','The guests all know each other well.'],a:1,
+  e:'<b>層次三 訊息與細節邏輯。</b>both A and B 把「加害」與「受害」兩個身分疊在同一群人身上，推論結果就是「無人安全、無人可信」。<br><b>為何其他錯：</b>(A) 島上根本沒有警察；(C) 文中說 die one by one；(D) 他們是 strangers。'},
+ {s:'The word "stuck" in "The train gets stuck in deep snow" is closest in meaning to',o:['unable to move','very warm','完全消失','beautiful'],a:0,
+  e:'<b>層次四 語言結構（polysemy 與語境推義）。</b>get stuck 表「動彈不得」，此處正是讓火車變成密室的關鍵條件；同一個字在 stuck in traffic（塞在車陣中）也是這個意思。<br><b>為何其他錯：</b>其餘三者與 deep snow 的語境不相容。'},
+ {s:'Which idea best matches the core theme of Murder on the Orient Express?',o:['Money is more important than friends.','Sometimes law and justice do not point in the same direction.','Trains are safer than ships.','Old rhymes can tell the future.'],a:1,
+  e:'<b>層次一 主要資訊。</b>表格寫 the conflict between law and justice，重點在「合法」與「正義」可能衝突，這也是本書結局震撼的原因。<br><b>為何其他錯：</b>(D) 屬第二本的童謠設計；(A)(C) 文中皆無根據。'}];
+mc(document.getElementById('masterQs'),MASTER,'m');
+drawBoard();paint();
+document.querySelectorAll('textarea').forEach(t=>{if(S.text[t.id])t.value=S.text[t.id];
+ t.addEventListener('input',()=>{S.text[t.id]=t.value;save();});});
+document.querySelectorAll('#trans input.blank').forEach(t=>{if(S.text[t.id])t.value=S.text[t.id];
+ t.addEventListener('input',()=>{S.text[t.id]=t.value;save();});});
+</script>
+</body>
+</html>
